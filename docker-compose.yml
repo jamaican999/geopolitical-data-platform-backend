@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://user:password@db:5432/geopolitical_data
+      - SECRET_KEY=your-production-secret-key
+    depends_on:
+      - db
+    volumes:
+      - ./src:/app/src
+    
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=geopolitical_data
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+
