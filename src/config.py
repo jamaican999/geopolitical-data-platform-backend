@@ -10,9 +10,17 @@ class Config:
     # CORS settings for production
     CORS_ORIGINS = os.environ.get('CORS_ORIGINS', '*').split(',')
     
-    # Database configuration
+    # Database configuration - supports both PostgreSQL and Supabase
     DATABASE_URL = os.environ.get('DATABASE_URL')
-    if DATABASE_URL:
+    SUPABASE_URL = os.environ.get('SUPABASE_URL')
+    SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
+    
+    if SUPABASE_URL and SUPABASE_KEY:
+        # Use Supabase connection
+        # Extract project ID from Supabase URL
+        project_id = SUPABASE_URL.replace('https://', '' ).replace('.supabase.co', '')
+        SQLALCHEMY_DATABASE_URI = f'postgresql://postgres:{SUPABASE_KEY}@db.{project_id}.supabase.co:5432/postgres'
+    elif DATABASE_URL:
         # Handle PostgreSQL URL format
         if DATABASE_URL.startswith('postgres://'):
             DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
@@ -32,7 +40,7 @@ class Config:
     CIA_FACTBOOK_URL = 'https://raw.githubusercontent.com/factbook/factbook.json/master'
     
     # Rate limiting
-    RATELIMIT_STORAGE_URL = os.environ.get('REDIS_URL', 'memory://')
+    RATELIMIT_STORAGE_URL = os.environ.get('REDIS_URL', 'memory://' )
 
 class DevelopmentConfig(Config):
     """Development configuration"""
@@ -43,13 +51,13 @@ class ProductionConfig(Config):
     """Production configuration"""
     DEBUG = False
     
-    # Ensure SECRET_KEY is set in production
-    if not os.environ.get('SECRET_KEY'):
-        raise ValueError("SECRET_KEY environment variable must be set in production")
-    
-    # Ensure DATABASE_URL is set in production
-    if not os.environ.get('DATABASE_URL'):
-        raise ValueError("DATABASE_URL environment variable must be set in production")
+    # Get SECRET_KEY from environment, with fallback for development
+    _secret_key = os.environ.get('SECRET_KEY', '').strip().strip('"').strip("'")
+    if not _secret_key:
+        # Generate a secure fallback if not set
+        import secrets
+        _secret_key = secrets.token_hex(32)
+    SECRET_KEY = _secret_key
 
 class TestingConfig(Config):
     """Testing configuration"""
@@ -63,4 +71,3 @@ config = {
     'testing': TestingConfig,
     'default': DevelopmentConfig
 }
-
