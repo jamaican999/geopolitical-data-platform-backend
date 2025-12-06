@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
-from src.models.database import db
+from src.models.database import db sqlalchemy import text
 from src.routes.sources import sources_bp
 from src.routes.data import data_bp
 from src.routes.tags import tags_bp
@@ -36,7 +36,7 @@ def create_app(config_name=None):
         """Health check endpoint for load balancer"""
         try:
             # Test database connection
-            db.session.execute('SELECT 1')
+            db.session.execute(text('SELECT 1'))
             return jsonify({
                 'status': 'healthy',
                 'service': 'geopolitical-data-platform',
