@@ -1,6 +1,6 @@
-# Geo-Political Data Platform - Backend
+# Internet Trawler Data Platform - Backend
 
-This is the backend component of the geo-political data platform, built with Flask and SQLAlchemy.
+This is the backend component of the Internet Trawler Data Platform, built with Flask and SQLAlchemy.
 
 ## Features
 
