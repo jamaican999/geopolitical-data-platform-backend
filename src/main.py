@@ -5,12 +5,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
-from src.models.database 
-import db sqlalchemy import text
+from src.models.database import db
+from sqlalchemy import text
 from src.routes.sources import sources_bp
 from src.routes.data import data_bp
 from src.routes.tags import tags_bp
 from src.routes.lineage import lineage_bp
+from src.routes.collectors import collectors_bp
 from src.config import config
 
 def create_app(config_name=None):
